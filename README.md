@@ -11,8 +11,8 @@ The hash table is mainly comprised of two components
 | Create an empty hash table                       | ✅        |
 | Insert a key-value pair                          | ✅        | 
 | Accept arbitrary key type                        | ✅        |
+| Get a key-value pair                             | ✅         |
 | Delete a key-value pair                          |          |
-| Find a value by key                              |          |
 | Update the value associated with an existing key |          |
 
 ### custom hash function requirements
