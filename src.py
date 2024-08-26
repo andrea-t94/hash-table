@@ -11,10 +11,10 @@ class HashTable:
         self.size = size
         # initialize empty value slots
         # None can be used since we expect tuples as non-empty values
-        self.items = [None] * self.size
+        self._items = [None] * self.size
 
     def __len__(self):
-        return len(self.items)
+        return len(self._items)
 
     def _index(self, key):
         return hash(key) % len(self)
@@ -22,11 +22,11 @@ class HashTable:
     def __setitem__(self, key, value):
         idx = self._index(key)
         # hash collision not taken into account
-        self.items[idx] = Pair(key, value)
+        self._items[idx] = Pair(key, value)
 
     def __getitem__(self, key):
         idx = self._index(key)
-        pair = self.items[idx]
+        pair = self._items[idx]
         if pair is None:
             raise KeyError(key)
         return pair.value
@@ -49,6 +49,11 @@ class HashTable:
         if key in self:
             # cannot use __setitem__ since None would be wrapped into a tuple
             # thus the item won't be considered deleted
-            self.items[self._index(key)] = None
+            self._items[self._index(key)] = None
         else:
             raise KeyError(key)
+
+    @property
+    def items(self):
+        # defensive copying
+        return [pair for pair in self._items if pair]
