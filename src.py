@@ -56,4 +56,13 @@ class HashTable:
     @property
     def items(self):
         # defensive copying
-        return [pair for pair in self._items if pair]
+        return {pair for pair in self._items if pair}
+
+    @property
+    def values(self):
+        # list gives me duplicates
+        return [pair.value for pair in self.items]
+
+    @property
+    def keys(self):
+        return {pair.key for pair in self.items}
