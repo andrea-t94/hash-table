@@ -7,7 +7,27 @@ def test_should_create_hashtable():
     assert HashTable(size = 100) is not None
 
 def test_should_return_size():
-    assert len(HashTable(size = 100)) == 100
+    assert len(HashTable(size = 100)) == 0
+
+def test_should_not_create_hashtable_with_zero_size():
+    with pytest.raises(ValueError):
+        HashTable(size=0)
+
+def test_should_not_create_hashtable_with_negative_size():
+    with pytest.raises(ValueError):
+        HashTable(size=-100)
+
+def test_should_not_create_hashtable_with_non_int_size():
+    with pytest.raises(TypeError):
+        HashTable(size='100')
+    with pytest.raises(TypeError):
+        HashTable(size=100.5)
+
+def test_should_report_capacity_of_empty_hash_table():
+    assert HashTable(size=100).size == 100
+
+def test_should_report_size(hash_table):
+    assert hash_table.size == 100
 
 def test_should_create_empty_value_slots():
     # Given
@@ -48,7 +68,7 @@ def test_add_key_should_not_increase_size():
     new_hash_size = len(hash_table)
 
     # Then
-    assert new_hash_size == hash_size
+    assert new_hash_size == 3
 
 def test_should_update_value(hash_table):
     assert hash_table["hola"] == "hello"
@@ -58,7 +78,7 @@ def test_should_update_value(hash_table):
     assert hash_table["hola"] == "hallo"
     assert hash_table[98.6] == 37
     assert hash_table[False] is True
-    assert len(hash_table) == 100
+    assert len(hash_table) == 3
 
 def test_should_not_contain_none_value_when_created():
     # there should be no pair.value as None when table is initialized
@@ -124,13 +144,6 @@ def test_should_delete_key_value_pair(hash_table):
 
     assert "hola" not in hash_table
     assert ("hola", "hello") not in hash_table.items
-
-def test_delete_should_not_shrink_size(hash_table):
-    assert len(hash_table) == 100
-
-    del hash_table["hola"]
-
-    assert len(hash_table) == 100
 
 def test_should_raise_key_error_when_deleting(hash_table):
     with pytest.raises(KeyError) as exception_info:
@@ -201,3 +214,4 @@ def test_should_convert_to_dict(hash_table):
     assert set(dictionary.keys()) == hash_table.keys
     assert set(dictionary.items()) == hash_table.items
     assert list(dictionary.values()) == unordered(hash_table.values)
+

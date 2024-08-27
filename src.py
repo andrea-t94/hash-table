@@ -8,16 +8,20 @@ class Pair(NamedTuple):
 class HashTable:
     def __init__(self, size):
         # fixed size established at creation time
-        self.size = size
+        if not isinstance(size, int):
+            raise TypeError(f"Invalid input type: {type(size).__name__}. Expected int.")
+        if size < 1:
+            raise ValueError("Capacity must be a positive number")
+        self._size = size
         # initialize empty value slots
         # None can be used since we expect tuples as non-empty values
-        self._items = [None] * self.size
+        self._items = [None] * self._size
 
     def __len__(self):
-        return len(self._items)
+        return len(self.items)
 
     def _index(self, key):
-        return hash(key) % len(self)
+        return hash(key) % len(self._items)
 
     def __setitem__(self, key, value):
         idx = self._index(key)
@@ -66,3 +70,7 @@ class HashTable:
     @property
     def keys(self):
         return {pair.key for pair in self.items}
+
+    @property
+    def size(self):
+        return self._size
