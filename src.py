@@ -1,9 +1,11 @@
 from typing import NamedTuple, Any
 
+
 class Pair(NamedTuple):
     # tuple that guarantees immutability for any data type
     key: Any
     value: Any
+
 
 class HashTable:
     def __init__(self, size):
@@ -17,11 +19,29 @@ class HashTable:
         # None can be used since we expect tuples as non-empty values
         self._items = [None] * self._size
 
+    @property
+    def items(self):
+        # defensive copying
+        return {pair for pair in self._items if pair}
+
+    @property
+    def values(self):
+        # list gives me duplicates
+        return [pair.value for pair in self.items]
+
+    @property
+    def keys(self):
+        return {pair.key for pair in self.items}
+
+    @property
+    def size(self):
+        return self._size
+
     def __len__(self):
         return len(self.items)
 
     def _index(self, key):
-        return hash(key) % len(self._items)
+        return hash(key) % self.size
 
     def __setitem__(self, key, value):
         idx = self._index(key)
@@ -57,20 +77,5 @@ class HashTable:
         else:
             raise KeyError(key)
 
-    @property
-    def items(self):
-        # defensive copying
-        return {pair for pair in self._items if pair}
-
-    @property
-    def values(self):
-        # list gives me duplicates
-        return [pair.value for pair in self.items]
-
-    @property
-    def keys(self):
-        return {pair.key for pair in self.items}
-
-    @property
-    def size(self):
-        return self._size
+    def __iter__(self):
+        yield from self.keys
