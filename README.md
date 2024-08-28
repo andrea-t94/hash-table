@@ -12,8 +12,13 @@ The hash table is mainly comprised of two components
 | Insert a key-value pair                          | ✅        | 
 | Accept arbitrary key type                        | ✅        |
 | Get a key-value pair                             | ✅         |
-| Delete a key-value pair                          |          |
+| Delete a key-value pair                          |     ✅     |
 | Update the value associated with an existing key |          |
+| Hash table is iterable                           |          |
+| Possible to compare to hash tables               |          |
+| Possible to convert python dictionary            | ✅         |
+| String representation                            | ✅         |
+
 
 ### custom hash function requirements
 
@@ -32,6 +37,5 @@ Those requirements have been tested
 
 ## TO DO
 
-1. continue building hash table with common hash
-2. add extra requirements
-3. test hash function requirements
+1. create a package
+3. prepare custom hash function requirements
