@@ -97,3 +97,15 @@ class HashTable:
         cls = self.__class__.__name__
         return f"{cls}.from_dict({str(self)})"
 
+    def __eq__(self, other):
+        ''' two objects are equal if they have the same set of key-value pairs'''
+        if self is other:
+            return True
+        if type(self) is not type(other):
+            return False
+        return set(self.items) == set(other.items)
+
+    def copy(self):
+        ''' create a new dictionary using the same items and size'''
+        return self.from_dict(dict(self.items), size=self.size)
+

@@ -13,11 +13,14 @@ The hash table is mainly comprised of two components
 | Accept arbitrary key type                        | ✅        |
 | Get a key-value pair                             | ✅         |
 | Delete a key-value pair                          |     ✅     |
-| Update the value associated with an existing key |          |
-| Hash table is iterable                           |          |
-| Possible to compare to hash tables               |          |
+| Update the value associated with an existing key |     ✅     |
+| Hash table is iterable                           |   ✅       |
+| Possible to compare to hash tables               |     ✅     |
 | Possible to convert python dictionary            | ✅         |
 | String representation                            | ✅         |
+| Union operation                                  | ✅         |
+| Miscellaneous (dict.clear() dict.update()        | ✅         |
+| Managing Hash collision                          | ✅         |
 
 
 ### custom hash function requirements
