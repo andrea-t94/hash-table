@@ -1,5 +1,7 @@
 from typing import NamedTuple, Any
 
+# sentinel value for marking a deleted object, useful for linear probing
+DELETED = object()
 
 class Pair(NamedTuple):
     # tuple that guarantees immutability for any data type
@@ -43,17 +45,35 @@ class HashTable:
     def _index(self, key):
         return hash(key) % self.size
 
+    def _probe(self, key):
+        # you start by using hashed idx, then, loop through all the available slots
+        index = self._index(key)
+        for _ in range(self.size):
+            yield index, self._items[index]
+            index = (index + 1) % self.size
+
     def __setitem__(self, key, value):
-        idx = self._index(key)
-        # hash collision not taken into account
-        self._items[idx] = Pair(key, value)
+        # linear probing hash collision resolution
+        # look next idx until we reach full size
+        for idx, pair in self._probe(key):
+            if pair is DELETED: continue
+            # search
+            if pair is None or pair.key == key:
+                # update
+                self._items[idx] = Pair(key, value)
+                break
+        else:
+            raise MemoryError("not enough size")
 
     def __getitem__(self, key):
-        idx = self._index(key)
-        pair = self._items[idx]
-        if pair is None:
-            raise KeyError(key)
-        return pair.value
+        for _, pair in self._probe(key):
+            if pair is None:
+                raise KeyError(key)
+            if pair is DELETED:
+                continue
+            if pair.key == key:
+                return pair.value
+        raise KeyError(key)
 
     def __contains__(self, key):
         try:
@@ -70,12 +90,16 @@ class HashTable:
             return default
 
     def __delitem__(self, key):
-        if key in self:
-            # cannot use __setitem__ since None would be wrapped into a tuple
-            # thus the item won't be considered deleted
-            self._items[self._index(key)] = None
-        else:
-            raise KeyError(key)
+        for idx, pair in self._probe(key):
+            if pair is None:
+                raise KeyError(key)
+            if pair is DELETED:
+                continue
+            if pair.key == key:
+                self._items[idx] = DELETED
+                break
+            else:
+                raise KeyError(key)
 
     def __iter__(self):
         yield from self.keys
@@ -108,4 +132,34 @@ class HashTable:
     def copy(self):
         ''' create a new dictionary using the same items and size'''
         return self.from_dict(dict(self.items), size=self.size)
+
+    def update(self, other):
+        ''' update a dictionary with items from other, in case both have same key, keep other value '''
+        if not isinstance(other, HashTable):
+            raise TypeError
+        if not other:
+            return self
+        for key, value in other.items:
+            self[key] = value
+
+    def __or__(self, other):
+        if not isinstance(other, HashTable):
+            raise TypeError
+        new = self.copy()
+        new.update(other)
+        return new
+
+    def __ror__(self, other):
+        ''' right union, in case left object doesn't have __or__ method '''
+        if not isinstance(other, HashTable):
+            raise TypeError
+        new = self.copy()
+        new.update(other)
+        return new
+
+    def __ior__(self, other):
+        ''' in-place union '''
+        self.update(other)
+        return self
+
 

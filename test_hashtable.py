@@ -1,5 +1,6 @@
 import pytest
 from pytest_unordered import unordered
+from unittest import mock
 
 from src import HashTable
 
@@ -313,3 +314,70 @@ def test_should_copy_keys_values_pairs_capacity(hash_table):
     assert unordered(hash_table.values) == copy.values
     assert set(hash_table.items) == set(copy.items)
     assert hash_table.size == copy.size
+
+# test update and union methods
+def test_should_update_has_all_keys():
+    table = HashTable.from_dict({"a": 1, "b": 2})
+    table2 = HashTable.from_dict({ "c": 3})
+    expected_table = HashTable.from_dict({"a": 1, "b": 2, "c": 3})
+    table.update(table2)
+
+    assert table == expected_table
+
+def test_should_overwrite_comm_keys():
+    ''' if same key, right table value should be the one kept'''
+    table = HashTable.from_dict({"a": 1, "b": 2})
+    table2 = HashTable.from_dict({"b": 3})
+    expected_table = HashTable.from_dict({"a": 1, "b": 3})
+    table.update(table2)
+
+    assert table == expected_table
+
+def test_should_raise_error_without_hash_table():
+    ''' if table2 is not an Hashtable shoulw raise an error'''
+    table = HashTable.from_dict({"a": 1, "b": 2})
+    table2 = 'ciao'
+    with pytest.raises(TypeError):
+        table.update(table2)
+
+
+def test_should_union_has_all_keys():
+    table = HashTable.from_dict({"a": 1, "b": 2})
+    table2 = HashTable.from_dict({ "c": 3})
+    expected_table = HashTable.from_dict({"a": 1, "b": 2, "c": 3})
+    new_table = table | table2
+
+    assert new_table == expected_table
+
+def test_should_in_place_union_has_all_keys():
+    table = HashTable.from_dict({"a": 1, "b": 2})
+    table2 = HashTable.from_dict({ "c": 3})
+    expected_table = HashTable.from_dict({"a": 1, "b": 2, "c": 3})
+    table |= table2
+
+    assert table == expected_table
+
+def test_should_overwrite_comm_keys():
+    ''' if same key, right table value should be the one kept'''
+    table = HashTable.from_dict({"a": 1, "b": 2})
+    table2 = HashTable.from_dict({"b": 3})
+    expected_table = HashTable.from_dict({"a": 1, "b": 3})
+    new_table = table | table2
+
+    assert new_table == expected_table
+
+def test_should_union_creates_new_table():
+    ''' union should not modify in place'''
+    table = HashTable.from_dict({"a": 1, "b": 2})
+    table2 = HashTable.from_dict({ "c": 3})
+    new_table = table | table2
+
+    assert new_table is not table
+
+# test hash collisions
+from unittest.mock import patch
+
+# Patching temporarily replaces built-in hash() function with a fake one that always returns the same expected value
+@patch("builtins.hash", return_value=42)
+def test_should_detect_hash_collision(hash_mock):
+    assert hash("foobar") == 42
