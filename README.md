@@ -21,6 +21,7 @@ The hash table is mainly comprised of two components
 | Union operation                                  | ✅         |
 | Miscellaneous (dict.clear() dict.update()        | ✅         |
 | Managing Hash collision                          | ✅         |
+| Dynamic resizing                  | ✅         |
 
 
 ### custom hash function requirements

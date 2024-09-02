@@ -251,8 +251,8 @@ def test_should_create_hashtable_from_dict():
     dictionary = {"hola": "hello", 98.6: 37, False: True}
 
     hash_table = HashTable.from_dict(dictionary)
-
-    assert hash_table.size == len(dictionary) * 10
+    # initial size same as len(dictionary)
+    assert hash_table.size == len(dictionary)
     assert hash_table.keys == set(dictionary.keys())
     assert hash_table.items == set(dictionary.items())
     assert unordered(hash_table.values) == list(dictionary.values())
@@ -380,4 +380,17 @@ from unittest.mock import patch
 # Patching temporarily replaces built-in hash() function with a fake one that always returns the same expected value
 @patch("builtins.hash", return_value=42)
 def test_should_detect_hash_collision(hash_mock):
-    assert hash("foobar") == 42
+    hash_table = HashTable(size=100)
+    hash_table["easy"] = "Requires little effort"
+    hash_table["difficult"] = "Needs much skill"
+    assert hash_table["easy"] == "Requires little effort"
+    assert hash_table["difficult"] == "Needs much skill"
+
+
+def test_should_dynamically_resize():
+    hash_table = HashTable(size=1)
+    for i in range(10):
+        hash_table[i] = i
+    assert hash_table.size == 16
+
+
