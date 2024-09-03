@@ -1,5 +1,6 @@
 from typing import NamedTuple, Any
 
+# TODO: 1. insertion order, hashablekeys, package, and finalize README
 # sentinel value for marking a deleted object, useful for linear probing
 DELETED = object()
 
@@ -43,18 +44,20 @@ class HashTable:
     def size(self):
         return self._size
 
+    @property
+    def load_factor(self):
+        occupied_or_deleted = [item for item in self._items if item]
+        return len(occupied_or_deleted) / self.size
+
+    @classmethod
+    def from_dict(cls, dictionary, size=None):
+        hash_table = cls(size or len(dictionary))
+        for key, value in dictionary.items():
+            hash_table[key] = value
+        return hash_table
+
     def __len__(self):
         return len(self.items)
-
-    def _index(self, key):
-        return hash(key) % self.size
-
-    def _probe(self, key):
-        # you start by using hashed idx, then, loop through all the available slots
-        index = self._index(key)
-        for _ in range(self.size):
-            yield index, self._items[index]
-            index = (index + 1) % self.size
 
     def __setitem__(self, key, value):
         # if self._load_factor_treshold == 1, that's a lazy resize
@@ -72,40 +75,6 @@ class HashTable:
                 # update
                 self._items[idx] = Pair(key, value)
                 break
-
-    def _resize_and_rehash(self):
-        # resize by creating a local copy
-        # sentile value slots are dropped
-        new = HashTable(size=self.size * 2)
-        for key, value in self.items:
-            # set into the new hash table
-            new[key] = value
-        self._items = new._items
-        self._size = new.size
-
-    def __getitem__(self, key):
-        for _, pair in self._probe(key):
-            if pair is None:
-                raise KeyError(key)
-            if pair is DELETED:
-                continue
-            if pair.key == key:
-                return pair.value
-        raise KeyError(key)
-
-    def __contains__(self, key):
-        try:
-            self[key]
-        except KeyError:
-            return False
-        else:
-            return True
-
-    def get(self, key, default=None):
-        try:
-            return self[key]
-        except KeyError:
-            return default
 
     def __delitem__(self, key):
         for idx, pair in self._probe(key):
@@ -128,13 +97,6 @@ class HashTable:
             pairs.append(f"{key!r}: {value!r}")
         return "{" + ", ".join(pairs) + "}"
 
-    @classmethod
-    def from_dict(cls, dictionary, size=None):
-        hash_table = cls(size or len(dictionary))
-        for key, value in dictionary.items():
-            hash_table[key] = value
-        return hash_table
-
     def __repr__(self):
         cls = self.__class__.__name__
         return f"{cls}.from_dict({str(self)})"
@@ -147,18 +109,23 @@ class HashTable:
             return False
         return set(self.items) == set(other.items)
 
-    def copy(self):
-        ''' create a new dictionary using the same items and size'''
-        return self.from_dict(dict(self.items), size=self.size)
+    def __getitem__(self, key):
+        for _, pair in self._probe(key):
+            if pair is None:
+                raise KeyError(key)
+            if pair is DELETED:
+                continue
+            if pair.key == key:
+                return pair.value
+        raise KeyError(key)
 
-    def update(self, other):
-        ''' update a dictionary with items from other, in case both have same key, keep other value '''
-        if not isinstance(other, HashTable):
-            raise TypeError
-        if not other:
-            return self
-        for key, value in other.items:
-            self[key] = value
+    def __contains__(self, key):
+        try:
+            self[key]
+        except KeyError:
+            return False
+        else:
+            return True
 
     def __or__(self, other):
         if not isinstance(other, HashTable):
@@ -180,9 +147,44 @@ class HashTable:
         self.update(other)
         return self
 
-    @property
-    def load_factor(self):
-        occupied_or_deleted = [item for item in self._items if item]
-        return len(occupied_or_deleted) / self.size
+    def get(self, key, default=None):
+        try:
+            return self[key]
+        except KeyError:
+            return default
+
+    def copy(self):
+        ''' create a new dictionary using the same items and size'''
+        return self.from_dict(dict(self.items), size=self.size)
+
+    def update(self, other):
+        ''' update a dictionary with items from other, in case both have same key, keep other value '''
+        if not isinstance(other, HashTable):
+            raise TypeError
+        if not other:
+            return self
+        for key, value in other.items:
+            self[key] = value
+
+    def _resize_and_rehash(self):
+        # resize by creating a local copy
+        # sentile value slots are dropped
+        new = HashTable(size=self.size * 2)
+        for key, value in self.items:
+            # set into the new hash table
+            new[key] = value
+        self._items = new._items
+        self._size = new.size
+
+    def _index(self, key):
+        return hash(key) % self.size
+
+    def _probe(self, key):
+        # you start by using hashed idx, then, loop through all the available slots
+        index = self._index(key)
+        for _ in range(self.size):
+            yield index, self._items[index]
+            index = (index + 1) % self.size
+
 
 

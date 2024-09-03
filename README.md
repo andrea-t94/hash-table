@@ -7,23 +7,24 @@ The hash table is mainly comprised of two components
 ### hash table key features
 
 | requirement                                      | included |  
-|--------------------------------------------------|----------|
-| Create an empty hash table                       | ✅        |
-| Insert a key-value pair                          | ✅        | 
-| Accept arbitrary key type                        | ✅        |
-| Get a key-value pair                             | ✅         |
-| Delete a key-value pair                          |     ✅     |
-| Update the value associated with an existing key |     ✅     |
-| Hash table is iterable                           |   ✅       |
-| Possible to compare to hash tables               |     ✅     |
-| Possible to convert python dictionary            | ✅         |
-| String representation                            | ✅         |
-| Union operation                                  | ✅         |
-| Miscellaneous (dict.clear() dict.update()        | ✅         |
-| Managing Hash collision                          | ✅         |
-| Dynamic resizing                  | ✅         |
-
-
+|--------------------------------------------------|--------|
+| Create an empty hash table                       | ✅      |
+| Insert a key-value pair                          | ✅      | 
+| Accept arbitrary key type                        | ✅      |
+| Get a key-value pair                             | ✅      |
+| Delete a key-value pair                          | ✅      |
+| Update the value associated with an existing key | ✅      |
+| Hash table is iterable                           | ✅      |
+| Possible to compare to hash tables               | ✅      |
+| Possible to convert python dictionary            | ✅      |
+| String representation                            | ✅      |
+| Union operation                                  | ✅      |
+| Miscellaneous (dict.clear() dict.update()        | ✅      |
+| Managing Hash collision: linear probing          | ✅      |
+| Managing Hash collision: separate chaining       |        |
+| Dynamic resizing                                 | ✅      |
+| Retain insertion order                           |        |
+| Make any key hashable                            |        |
 ### custom hash function requirements
 
 Those requirements have been tested
