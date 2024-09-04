@@ -154,14 +154,14 @@ def test_should_raise_key_error_when_deleting(hash_table):
 # test get key-value pairs (items)
 
 def test_should_return_items(hash_table):
-    assert hash_table.items == {
+    assert hash_table.items == [
         ("hola", "hello"),
         (98.6, 37),
         (False, True)
-    }
+    ]
 
 def test_should_get_pairs_of_empty_hash_table():
-    assert HashTable(size=100).items == set()
+    assert HashTable(size=100).items == []
 
 def test_should_return_pairs(hash_table):
     # order of items shown is not important
@@ -201,10 +201,10 @@ def test_should_return_copy_of_values(hash_table):
 
 # test hash table keys
 def test_should_get_keys(hash_table):
-    assert hash_table.keys == {"hola", 98.6, False}
+    assert hash_table.keys == ["hola", 98.6, False]
 
 def test_should_get_keys_of_empty_hash_table():
-    assert HashTable(size=100).keys == set()
+    assert HashTable(size=100).keys == []
 
 def test_should_return_copy_of_keys(hash_table):
     assert hash_table.keys is not hash_table.keys
@@ -212,8 +212,8 @@ def test_should_return_copy_of_keys(hash_table):
 # test the whole hash table
 def test_should_convert_to_dict(hash_table):
     dictionary = dict(hash_table.items)
-    assert set(dictionary.keys()) == hash_table.keys
-    assert set(dictionary.items()) == hash_table.items
+    assert list(dictionary.keys()) == hash_table.keys
+    assert list(dictionary.items()) == hash_table.items
     assert list(dictionary.values()) == unordered(hash_table.values)
 
 # test if hash table is iterable
@@ -251,10 +251,10 @@ def test_should_create_hashtable_from_dict():
     dictionary = {"hola": "hello", 98.6: 37, False: True}
 
     hash_table = HashTable.from_dict(dictionary)
-    # initial size same as len(dictionary)
-    assert hash_table.size == len(dictionary)
-    assert hash_table.keys == set(dictionary.keys())
-    assert hash_table.items == set(dictionary.items())
+    # size should be len(dictionary)*2, given automatic resizing to have load_factor_treshold < 0.6
+    assert hash_table.size == len(dictionary)*2
+    assert hash_table.keys == list(dictionary.keys())
+    assert hash_table.items == list(dictionary.items())
     assert unordered(hash_table.values) == list(dictionary.values())
 
 def test_should_have_canonical_string_representation(hash_table):
@@ -274,8 +274,8 @@ def test_should_create_hashtable_from_dict_with_custom_size():
     hash_table = HashTable.from_dict(dictionary, size=100)
 
     assert hash_table.size == 100
-    assert hash_table.keys == set(dictionary.keys())
-    assert hash_table.items == set(dictionary.items())
+    assert hash_table.keys == list(dictionary.keys())
+    assert hash_table.items == list(dictionary.items())
     assert unordered(hash_table.values) == list(dictionary.values())
 
 # test equality
@@ -393,4 +393,20 @@ def test_should_dynamically_resize():
         hash_table[i] = i
     assert hash_table.size == 16
 
+# test insertion order
+
+def test_should_give_correct_key_insertion_order(hash_table):
+
+    assert hash_table.keys == ["hola", 98.6, False]
+
+def test_should_give_correct_value_insertion_order(hash_table):
+
+    assert hash_table.values == ["hello", 37, True]
+
+def test_should_give_no_duplicated_keys():
+    hash_table = HashTable(size=100)
+    hash_table["hola"] = "hello"
+    hash_table["hola"] = "hello"
+
+    assert hash_table.keys == ["hola"]
 

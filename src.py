@@ -1,6 +1,6 @@
 from typing import NamedTuple, Any
 
-# TODO: 1. insertion order, hashablekeys, package, and finalize README
+# TODO: hashablekeys, package, and finalize README
 # sentinel value for marking a deleted object, useful for linear probing
 DELETED = object()
 
@@ -21,24 +21,27 @@ class HashTable:
             raise ValueError("Capacity must be a positive number")
         self._size = size
         self._load_factor_treshold = load_factor_treshold
-        # initialize empty value slots
+        # initialize empty value slots (key-value pairs)
         # None can be used since we expect tuples as non-empty values
         self._items = [None] * self._size
+        # list that preserves the insertion order of the keys
+        # this reduces performances, since list search is O(N) vs set O(1)
+        self._keys = []
 
     @property
     def items(self):
-        # defensive copying
-        return {pair for pair in self._items
-                if pair not in (None, DELETED)}
+        # defensive copying + keep insertion order
+        return [(key, self[key]) for key in self.keys
+                if self._getpair(key) not in (None, DELETED)]
 
     @property
     def values(self):
         # list gives me duplicates
-        return [pair.value for pair in self.items]
+        return [self[key] for key in self._keys]
 
     @property
     def keys(self):
-        return {pair.key for pair in self.items}
+        return self._keys.copy()
 
     @property
     def size(self):
@@ -65,14 +68,20 @@ class HashTable:
             self._resize_and_rehash()
             self[key] = value
         # linear probing hash collision resolution
-        # look next idx until we find next exmpty slot
+        # look next hashed idx until we find empty slot
         for idx, pair in self._probe(key):
             # DELETED item slot is not replaced
             if pair is DELETED: continue
             # search
             # TODO: equality test is costly, try hash-equal contract + store hash in pairs since cheaper comparison
-            if pair is None or pair.key == key:
-                # update
+            if pair is None:
+                # update, if we have matching key we overwrite
+                self._items[idx] = Pair(key, value)
+                # new key to be appended
+                self._keys.append(key)
+                break
+            if pair.key == key:
+                # update, if we have matching key we overwrite
                 self._items[idx] = Pair(key, value)
                 break
 
@@ -84,9 +93,31 @@ class HashTable:
                 continue
             if pair.key == key:
                 self._items[idx] = DELETED
+                self._keys.remove(key)
                 break
             else:
                 raise KeyError(key)
+
+    def __getitem__(self, key):
+        for _, pair in self._probe(key):
+            if pair is None:
+                raise KeyError(key)
+            if pair is DELETED:
+                continue
+            if pair.key == key:
+                return pair.value
+        raise KeyError(key)
+
+    def _getpair(self, key):
+        ''' custom implementation to get the pair from key'''
+        for _, pair in self._probe(key):
+            if pair is None:
+                raise KeyError(key)
+            if pair is DELETED:
+                continue
+            if pair.key == key:
+                return pair
+        raise KeyError(key)
 
     def __iter__(self):
         yield from self.keys
@@ -108,16 +139,6 @@ class HashTable:
         if type(self) is not type(other):
             return False
         return set(self.items) == set(other.items)
-
-    def __getitem__(self, key):
-        for _, pair in self._probe(key):
-            if pair is None:
-                raise KeyError(key)
-            if pair is DELETED:
-                continue
-            if pair.key == key:
-                return pair.value
-        raise KeyError(key)
 
     def __contains__(self, key):
         try:

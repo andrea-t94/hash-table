@@ -23,8 +23,11 @@ The hash table is mainly comprised of two components
 | Managing Hash collision: linear probing          | ✅      |
 | Managing Hash collision: separate chaining       |        |
 | Dynamic resizing                                 | ✅      |
-| Retain insertion order                           |        |
+| Retain insertion order                           |  ✅      |
 | Make any key hashable                            |        |
+| Improve search performance*                      |        |
+
+currently O(N) given by list needed to keep insertion order
 ### custom hash function requirements
 
 Those requirements have been tested
