@@ -3,6 +3,8 @@ Custom hash table implementation that tries to replicate built-in Python diction
 The aim is to better understand its functioning and apply TDD framework to test core functionalities.
 
 ## Getting started
+Install official package ([here](https://pypi.org/project/hash-table-at/))  
+
 Missing
 
 ## Technical Documentation
