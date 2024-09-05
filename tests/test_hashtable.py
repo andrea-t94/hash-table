@@ -1,8 +1,7 @@
 import pytest
 from pytest_unordered import unordered
-from unittest import mock
 
-from src import HashTable
+from hash_table.main import HashTable
 
 def test_should_create_hashtable():
     assert HashTable(size = 100) is not None

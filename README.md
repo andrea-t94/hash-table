@@ -1,49 +1,41 @@
 # hash-table
-I want to replicate built-in Python hash table to better understand its functioning. Moreover I apply TDD framework to make sure it's working as expected. mplementing a well-known data structure such as a hash table is a perfect application of this software development methodology. You have clear expectations that are straightforward to codify as test cases.  
-The hash table is mainly comprised of two components
-- hash function
-- linked list
+Custom hash table implementation that tries to replicate built-in Python dictionary.
+The aim is to better understand its functioning and apply TDD framework to test core functionalities.
+
+## Getting started
+Missing
+
+## Technical Documentation
 
 ### hash table key features
 
+If you have any new feature, feel free to create a MR explaining this feature and I'll add that to the list
+
 | requirement                                      | included |  
-|--------------------------------------------------|--------|
-| Create an empty hash table                       | ✅      |
-| Insert a key-value pair                          | ✅      | 
-| Accept arbitrary key type                        | ✅      |
-| Get a key-value pair                             | ✅      |
-| Delete a key-value pair                          | ✅      |
-| Update the value associated with an existing key | ✅      |
-| Hash table is iterable                           | ✅      |
-| Possible to compare to hash tables               | ✅      |
-| Possible to convert python dictionary            | ✅      |
-| String representation                            | ✅      |
-| Union operation                                  | ✅      |
-| Miscellaneous (dict.clear() dict.update()        | ✅      |
-| Managing Hash collision: linear probing          | ✅      |
-| Managing Hash collision: separate chaining       |        |
-| Dynamic resizing                                 | ✅      |
-| Retain insertion order                           |  ✅      |
-| Make any key hashable                            |        |
-| Improve search performance*                      |        |
+|--------------------------------------------------|---------|
+| Create an empty hash table                       | ✅       |
+| Insert a key-value pair                          | ✅       | 
+| Accept arbitrary key type                        | ✅       |
+| Get a key-value pair                             | ✅       |
+| Delete a key-value pair                          | ✅       |
+| Update the value associated with an existing key | ✅       |
+| Hash table is iterable                           | ✅       |
+| Possible to compare to hash tables               | ✅       |
+| Possible to convert python dictionary            | ✅       |
+| String representation                            | ✅       |
+| Union operation                                  | ✅       |
+| Miscellaneous (dict.clear() dict.update()        | ✅       |
+| Managing Hash collision: linear probing          | ✅       |
+| Managing Hash collision: separate chaining       |         |
+| Dynamic resizing                                 | ✅       |
+| Retain insertion order                           | ✅       |
 
-currently O(N) given by list needed to keep insertion order
-### custom hash function requirements
+### Features documentation
+Missing
 
-Those requirements have been tested
+### Improve performances
+At the moment the actual performances are not comparable to python built-in dictionary.
+I've identified two key pain points that I want to improve in the search f a key:
+1. __setitem__ uses string comparison, which is costly (O(N)). Want to move to hash comparison
+2. __delitem__ has to remove key from a list in linear time  (O(N)). Want to move away from lists to improve search, without loosing the key insertion order
 
-| requirement             | included |  
-|-------------------------|----------|
-| deterministic           |          |
-| universal input         |          | 
-| fixed-size output       |          |
-| uniformely distributed  |          |
-| fast to compute         |          |
-
-
-
-
-## TO DO
-
-1. create a package
-3. prepare custom hash function requirements
