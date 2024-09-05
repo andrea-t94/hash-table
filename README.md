@@ -39,3 +39,6 @@ I've identified two key pain points that I want to improve in the search f a key
 1. __setitem__ uses string comparison, which is costly (O(N)). Want to move to hash comparison
 2. __delitem__ has to remove key from a list in linear time  (O(N)). Want to move away from lists to improve search, without loosing the key insertion order
 
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
